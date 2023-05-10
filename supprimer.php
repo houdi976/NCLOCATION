@@ -1,24 +1,24 @@
-<?php require('connexion.php');?>
-<!doctype html>
-
-<meta charset="utf-8">
 <?php
- 
-if (isset($_GET['supCar'])) {
+require('connexion.php');
+?>
 
-	$sup=(int) ($_GET["supCar"]);
-	
-    $reqDelete="DELETE FROM automobile WHERE Immatriculation =".$sup;
-	$resultat=mysqli_query($cnnclocation,$reqDelete);
-	
+<!doctype html>
+<meta charset="utf-8">
+
+<?php
+try {
+    if (isset($_GET['supCar'])) {
+        $sup = (int) $_GET["supCar"];
+        $reqDelete = "DELETE FROM automobile WHERE Immatriculation =" . $sup;
+        $resultat = mysqli_query($cnnclocation, $reqDelete);
+
+        if ($resultat) {
+            echo "La suppression a été correctement effectuée <a href='accueil.php'>Tableau de Bord</a>";
+        } else {
+            throw new Exception("La suppression a échoué");
+        }
     }
- 
-  if($reqDelete)
-  {
-    echo "La suppression a été correctement effectuée <a href='accueil.php'>Tableau de Bord</a>" ;
-  }
-  else
-  {
-    echo"La suppression à échouée <a href='accueil.php'>Tableau de Bord</a>" ;
-  }
+} catch (Exception $e) {
+    echo $e->getMessage() . " <a href='accueil.php'>Tableau de Bord</a>";
+}
 ?>

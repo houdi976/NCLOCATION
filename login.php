@@ -1,4 +1,7 @@
-<?php require_once('connexion.php');?>
+<?php 
+try {
+    // Tentative de connexion à la base de données
+require_once('connexion.php');?>
 <!doctype html>
 <html>
 <head>
@@ -28,20 +31,25 @@
 
                 <input type="submit" id='submit' class="submit" name="btlogin" value='LOGIN' >
                  <?php 
-  if(isset($_POST['btlogin'])){
-$req="select * from utilisateurs where login='".$_POST['txtlogin']."' and motPasse='".$_POST['txtpw']."'";
-if($resultat=mysqli_query($cnnclocation,$req)){
-$ligne=mysqli_fetch_assoc($resultat);
-if($ligne!=0)
-{
-session_start();
-$_SESSION['login']= $_POST['txtlogin'];
-//echo "Bienvenue".$_SESSION['login'];
-	header("location:accueil.php");
+   if(isset($_POST['btlogin'])){
+    $req="select * from utilisateurs where login='".$_POST['txtlogin']."' and motPasse='".$_POST['txtpw']."'";
+    if($resultat=mysqli_query($cnnclocation,$req)){
+        $ligne=mysqli_fetch_assoc($resultat);
+        if($ligne!=0)
+        {
+            session_start();
+            $_SESSION['login']= $_POST['txtlogin'];
+            header("location:accueil.php");
+        }
+        else {
+            throw new Exception("Login ou mot de passe invalide !");
+        }
+    }
 }
-else {
-echo "<font color='#F0001D'>Login ou mot des passe est invalide !!!!</font>";
-} } }
+} catch (Exception $e) {
+// En cas d'exception, afficher le message d'erreur approprié
+echo "<font color='#F0001D'>".$e->getMessage()."</font>";
+}
 ?>
             </form>
         </div>

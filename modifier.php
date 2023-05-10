@@ -1,4 +1,6 @@
-<?php require_once('connexion.php');?>
+<?php 
+try {
+require_once('connexion.php');?>
 <!doctype html>
 <html>
 <head>
@@ -35,35 +37,37 @@
                 <label style="text-align: center;color: #360001;">
                 	
                 	<?php
-	if(isset($_POST['btmod']))
-	{
-		$imm=$_POST['txtImm'];
-		$marque=$_POST['txtMarque'];
-		$prixloc=$_POST['txtPl'];
-		
-		$modifier=(int) ($_GET["mod"]);
-		
-  	$image = $_FILES['txtphoto']['tmp_name'];
-  	
-		
-  	$target = "images/".$_FILES['txtphoto']['name'];
+if(isset($_POST['btmod'])) {
+	// récupération des valeurs du formulaire
+	$imm=$_POST['txtImm'];
+	$marque=$_POST['txtMarque'];
+	$prixloc=$_POST['txtPl'];
 
-		if (move_uploaded_file($image,$target)) {
-  		$msg = "Image téléchargée avec succès";
-  	}else{
-  		$msg = "Impossible de télécharger l'image";
-  	}
-  	$sql = "UPDATE automobile SET Marque = '$marque', Prix_Loc = '$prixloc' , Photo ='$target' WHERE Immatriculation ='".$_GET["mod"]."'";
-		$resultat=mysqli_query($cnnclocation,$sql);
+	// vérification de la présence de la photo
+	if (!isset($_FILES['txtphoto']) || $_FILES['txtphoto']['error'] != UPLOAD_ERR_OK) {
+		throw new Exception('La photo est obligatoire.');
+	}
+	
+	// récupération et sauvegarde de la photo
+	$image = $_FILES['txtphoto']['tmp_name'];
+	$target = "images/".$_FILES['txtphoto']['name'];
+	if (!move_uploaded_file($image,$target)) {
+		throw new Exception('Impossible de télécharger l\'image.');
+	}
 
-if($resultat)
-{
+	// mise à jour des données dans la base de données
+	$sql = "UPDATE automobile SET Marque = '$marque', Prix_Loc = '$prixloc' , Photo ='$target' WHERE Immatriculation ='".$_GET["mod"]."'";
+	$resultat=mysqli_query($cnnclocation,$sql);
+
+	if(!$resultat) {
+		throw new Exception('Echec de modification des données !');
+	}
+	
 	echo "Mise a jour des données validés";
-}else{
-	echo "Echec de modification des données !";
 }
-  	
-  }
+} catch (Exception $e) {
+echo 'Erreur : ',  $e->getMessage();
+}
   
 		
 		

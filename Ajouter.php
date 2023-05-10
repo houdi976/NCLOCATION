@@ -33,38 +33,33 @@
                 <label style="text-align: center;color: #360001;">
                 	
                 	<?php
-	if(isset($_POST['btadd']))
-	{
-		$imm=$_POST['txtImm'];
-		$marque=$_POST['txtMarque'];
-		$prixloc=$_POST['txtPl'];
-				
-  	$image = $_FILES['txtphoto']['tmp_name'];
-  	
-		//$image_text = mysqli_real_escape_string($cnloccar, $_POST['txtphoto']);
+if (isset($_POST['btadd'])) {
+    try {
+        $imm = $_POST['txtImm'];
+        $marque = $_POST['txtMarque'];
+        $prixloc = $_POST['txtPl'];
+        $image = $_FILES['txtphoto']['tmp_name'];
+        $target = "images/" . $_FILES['txtphoto']['name'];
 
-  	$target = "images/".$_FILES['txtphoto']['name'];
-//$target = "images/".basename($image);
-		if (move_uploaded_file($image,$target)) {
-  		$msg = "Image téléchargée avec succès";
-  	}else{
-  		$msg = "Impossible de télécharger l'image";
-  	}
-  	$sql = "INSERT INTO automobile (Immatriculation, Marque,Prix_Loc,Photo) VALUES ('$imm','$marque','$prixloc', '$target')";
-		$resultat=mysqli_query($cnnclocation,$sql);
+        if (move_uploaded_file($image, $target)) {
+            $msg = "Image téléchargée avec succès";
+        } else {
+            $msg = "Impossible de télécharger l'image";
+        }
 
-if($resultat)
-{
-	echo "Insertion des données validés";
-}else{
-	echo "Echec d'insertion des données !";
+        $sql = "INSERT INTO automobile (Immatriculation, Marque, Prix_Loc, Photo) VALUES ('$imm','$marque','$prixloc', '$target')";
+        $resultat = mysqli_query($cnnclocation, $sql);
+
+        if ($resultat) {
+            echo "Insertion des données validée";
+        } else {
+            echo "Échec d'insertion des données !";
+        }
+    } catch (Exception $e) {
+        echo "Une exception s'est produite : " . $e->getMessage();
+    }
 }
-  	
-  }
-  
-		
-		
-	?>
+?>
                 	
                 	
                 	
