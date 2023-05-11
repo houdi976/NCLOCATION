@@ -47,7 +47,7 @@ if(isset($_POST['btmod'])) {
 	if (!isset($_FILES['txtphoto']) || $_FILES['txtphoto']['error'] != UPLOAD_ERR_OK) {
 		throw new Exception('La photo est obligatoire.');
 	}
-	
+
 	// récupération et sauvegarde de la photo
 	$image = $_FILES['txtphoto']['tmp_name'];
 	$target = "images/".$_FILES['txtphoto']['name'];
@@ -56,14 +56,14 @@ if(isset($_POST['btmod'])) {
 	}
 
 	// mise à jour des données dans la base de données
-	$sql = "UPDATE automobile SET Marque = '$marque', Prix_Loc = '$prixloc' , Photo ='$target' WHERE Immatriculation ='".$_GET["mod"]."'";
-	$resultat=mysqli_query($cnnclocation,$sql);
-
-	if(!$resultat) {
+	$stmt = $cnnclocation->prepare("UPDATE automobile SET Marque = ?, Prix_Loc = ?, Photo = ? WHERE Immatriculation = ?");
+	$stmt->bind_param("ssss", $marque, $prixloc, $target, $imm);
+	if (!$stmt->execute()) {
 		throw new Exception('Echec de modification des données !');
 	}
-	
+
 	echo "Mise a jour des données validés";
+
 }
 } catch (Exception $e) {
 echo 'Erreur : ',  $e->getMessage();
